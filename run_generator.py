@@ -27,10 +27,15 @@ def generate_images(network_pkl, seeds, truncation_psi):
     if truncation_psi is not None:
         Gs_kwargs.truncation_psi = truncation_psi
 
-    for seed_idx, seed in enumerate(seeds):
-        print('Generating image for seed %d (%d/%d) ...' % (seed, seed_idx, len(seeds)))
+    if len(seeds) != 2 :
+        print('Enter two integers defining seed range!')
+        return
+
+    for seed_idx, seed in enumerate(range(seeds[0],seeds[1]+1)):
+        print('Generating image for seed %d (%d/%d) ...' % (seed, seed_idx, seeds[1]-seeds[0]))
         rnd = np.random.RandomState(seed)
         z = rnd.randn(1, *Gs.input_shape[1:]) # [minibatch, component]
+        np.save(dnnlib.make_run_dir_path('seed%04d.npy' % seed), z)
         tflib.set_vars({var: rnd.randn(*var.shape.as_list()) for var in noise_vars}) # [height, width]
         images = Gs.run(z, None, **Gs_kwargs) # [minibatch, height, width, channel]
         PIL.Image.fromarray(images[0], 'RGB').save(dnnlib.make_run_dir_path('seed%04d.png' % seed))
