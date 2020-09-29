@@ -22,7 +22,7 @@ class StyleGAN2Generator(object):
         if not os.path.isdir(self.result_dir):
             os.mkdir(self.result_dir)
 
-    def generate_images(self, latent_vector): 
+    def generate_images(self, latent_vector):
         # generate face image from given latent vector
         noise_seed = np.random.randint(10000)
         noise_vars = [var for name, var in self.Gs.components.synthesis.vars.items() if name.startswith('noise')]
@@ -37,4 +37,5 @@ class StyleGAN2Generator(object):
         z = latent_vector # [minibatch, component]
         tflib.set_vars({var: rnd.randn(*var.shape.as_list()) for var in noise_vars}) # [height, width]
         images = self.Gs.run(z, None, **Gs_kwargs) # [minibatch, height, width, channel]
-        PIL.Image.fromarray(images[0], 'RGB').save(os.path.join(self.result_dir, 'seed%04d.png' % noise_seed))
+        
+        return images[0]
