@@ -16,6 +16,8 @@ import pretrained_networks
 from training import dataset
 from training import misc
 
+import pickle
+
 #----------------------------------------------------------------------------
 
 def project_image(proj, targets, png_prefix, num_snapshots):
@@ -28,6 +30,10 @@ def project_image(proj, targets, png_prefix, num_snapshots):
         if proj.get_cur_step() in snapshot_steps:
             misc.save_image_grid(proj.get_images(), png_prefix + 'step%04d.png' % proj.get_cur_step(), drange=[-1,1])
     print('\r%-30s\r' % '', end='', flush=True)
+    # --- Custom Change ---
+    print(proj.get_dlatents().shape)
+    with open(png_prefix + 'final_latent_code.pkl', 'wb') as out_file:
+        pickle.dump(proj.get_dlatents(), out_file)
 
 #----------------------------------------------------------------------------
 

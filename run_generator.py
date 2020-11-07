@@ -37,6 +37,7 @@ def generate_images(network_pkl, seeds, truncation_psi):
         z = rnd.randn(1, *Gs.input_shape[1:]) # [minibatch, component]
         np.save(dnnlib.make_run_dir_path('seed%04d.npy' % seed), z)
         tflib.set_vars({var: rnd.randn(*var.shape.as_list()) for var in noise_vars}) # [height, width]
+        # images = Gs.components.synthesis.run(latent_vec, **Gs_kwargs) # [minibatch, height, width, channel]
         images = Gs.run(z, None, **Gs_kwargs) # [minibatch, height, width, channel]
         PIL.Image.fromarray(images[0], 'RGB').save(dnnlib.make_run_dir_path('seed%04d.png' % seed))
 
