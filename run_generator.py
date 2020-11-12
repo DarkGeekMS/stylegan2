@@ -34,11 +34,11 @@ def generate_images(network_pkl, seeds, truncation_psi):
     for seed_idx, seed in enumerate(range(seeds[0],seeds[1]+1)):
         print('Generating image for seed %d (%d/%d) ...' % (seed, seed_idx, seeds[1]-seeds[0]))
         rnd = np.random.RandomState(seed)
-        z = rnd.randn(1, *Gs.input_shape[1:]) # [minibatch, component]
-        np.save(dnnlib.make_run_dir_path('seed%04d.npy' % seed), z)
+        w = rnd.randn(1, 18, *Gs.input_shape[1:]) # [minibatch, component]
+        np.save(dnnlib.make_run_dir_path('seed%04d.npy' % seed), w)
         tflib.set_vars({var: rnd.randn(*var.shape.as_list()) for var in noise_vars}) # [height, width]
-        # images = Gs.components.synthesis.run(latent_vec, **Gs_kwargs) # [minibatch, height, width, channel]
-        images = Gs.run(z, None, **Gs_kwargs) # [minibatch, height, width, channel]
+        images = Gs.components.synthesis.run(w, **Gs_kwargs) # [minibatch, height, width, channel]
+        # images = Gs.run(z, None, **Gs_kwargs) # [minibatch, height, width, channel]
         PIL.Image.fromarray(images[0], 'RGB').save(dnnlib.make_run_dir_path('seed%04d.png' % seed))
 
 #----------------------------------------------------------------------------
